@@ -352,3 +352,6 @@ http-client.private.env.json
 
 # Kubernetes Plugin
 .idea/kubernetes/configs/kubeconfig_*
+
+# Generated experiment outputs
+results/

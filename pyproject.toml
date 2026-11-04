@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lih-vqe"
+version = "0.1.0"
+description = "A small, reproducible VQE study of lithium hydride"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "matplotlib>=3.9,<4",
+    "numpy>=1.26,<3",
+    "pyscf>=2.8,<3",
+    "qiskit>=1.4,<3",
+    "qiskit-aer>=0.16,<0.20",
+    "qiskit-nature>=0.8,<0.9",
+    "scipy>=1.13,<2",
+]
+
+[project.scripts]
+lih-vqe = "lih_vqe.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "ruff>=0.12,<1"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lih_vqe"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: real molecular calculations using PySCF and Qiskit"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
