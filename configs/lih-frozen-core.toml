@@ -1,0 +1,6 @@
+# Freeze only the Li 1s core: 2 electrons in 5 orbitals -> 10 JW qubits.
+# Parity with two_qubit_reduction=true would encode the same model in 8 qubits.
+[model]
+kind = "frozen_core"
+mapping = "jordan_wigner"
+two_qubit_reduction = false

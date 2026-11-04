@@ -1,0 +1,5 @@
+# Full LiH/STO-3G: 4 electrons, 6 spatial orbitals -> 12 Jordan-Wigner qubits.
+[model]
+kind = "full"
+mapping = "jordan_wigner"
+two_qubit_reduction = false

@@ -1,0 +1,5 @@
+# Smaller active model: six spin orbitals -> four symmetry-reduced qubits.
+[model]
+kind = "active"
+active_electrons = 2
+active_orbitals = [1, 2, 5]

@@ -1,0 +1,30 @@
+[molecule]
+symbols = ["Li", "H"]
+distance = 1.6
+basis = "sto-3g"
+threads = 1
+
+[model]
+kind = "active"
+active_electrons = 2
+# Zero-based RHF orbitals for LiH/STO-3G, with the bond on the z axis.
+active_orbitals = [1, 2, 3, 5]
+mapping = "parity"
+two_qubit_reduction = true
+
+[vqe]
+ansatz = "uccsd"
+reps = 1
+optimizer = "SLSQP"
+max_evaluations = 500
+tolerance = 1e-8
+seed = 42
+
+[evaluation]
+# Total measurement budget after ideal optimization; zero disables sampling.
+shots = 0
+noise = 0.0
+seed = 123
+
+[scan]
+distances = [1.2, 1.6, 2.0, 2.5, 3.1]

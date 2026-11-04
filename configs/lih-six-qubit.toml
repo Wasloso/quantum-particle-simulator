@@ -1,0 +1,4 @@
+# Three sigma orbitals and one orbital from the virtual pi pair.
+[model]
+kind = "active"
+active_orbitals = [1, 2, 3, 5]
