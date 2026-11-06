@@ -8,10 +8,12 @@ from lih_vqe.chemistry import MolecularProblem
 from lih_vqe.config import VQEConfig
 from lih_vqe.enums import AnsatzKind
 
+
 @dataclass
 class Ansatz:
     circuit: QuantumCircuit
     resources: dict[str, int]
+
 
 def build_ansatz(problem: MolecularProblem, config: VQEConfig) -> Ansatz:
     electronic = problem.problem
