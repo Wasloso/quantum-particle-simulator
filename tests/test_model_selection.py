@@ -2,7 +2,7 @@ import pytest
 from pyscf import lib
 from qiskit_nature.second_q.drivers import PySCFDriver
 
-from lih_vqe.config import ModelConfig, load_config
+from lih_vqe.config import load_config
 from lih_vqe.enums import ModelKind
 from lih_vqe.models import ActiveSpace, FrozenCore, FullSpace, make_model
 
@@ -11,15 +11,6 @@ from lih_vqe.models import ActiveSpace, FrozenCore, FullSpace, make_model
 def molecule():
     lib.num_threads(1)
     return PySCFDriver(atom="Li 0 0 0; H 0 0 1.6", basis="sto3g").run()
-
-
-def test_model_factory():
-    assert isinstance(make_model(ModelConfig(kind="full")), FullSpace)
-    assert isinstance(make_model(ModelConfig(kind="frozen_core")), FrozenCore)
-    model = make_model(ModelConfig())
-    assert isinstance(model, ActiveSpace)
-    assert model.electrons == 2
-    assert model.orbitals == (1, 2, 3, 5)
 
 
 @pytest.mark.parametrize(

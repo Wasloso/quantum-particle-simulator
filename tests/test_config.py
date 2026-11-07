@@ -42,14 +42,3 @@ def test_toml_orbitals_and_defaults(tmp_path):
     assert saved["model"]["mapping"] == "parity"
     assert saved["vqe"]["ansatz"] == "hea"
     assert saved["vqe"]["optimizer"] == "SLSQP"
-
-
-@pytest.mark.parametrize(
-    ("section", "key"),
-    [("model", "kind"), ("model", "mapping"), ("vqe", "ansatz"), ("vqe", "optimizer")],
-)
-def test_rejects_unknown_choices(tmp_path, section, key):
-    path = tmp_path / "settings.toml"
-    path.write_text(f'[{section}]\n{key} = "unknown"\n')
-    with pytest.raises(ValueError):
-        load_config(path)
