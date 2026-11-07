@@ -1,8 +1,8 @@
 import pytest
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, transpile
 from qiskit.quantum_info import SparsePauliOp
 
-from lih_vqe.evaluation import sampled_energy
+from lih_vqe.evaluation import noisy_energy, sampled_energy
 
 
 def test_sampling_y_basis_and_identity_offset():
@@ -38,3 +38,13 @@ def test_shots_are_divided_between_groups_and_reproducible():
 def test_rejects_shot_budget_too_small_for_variance():
     with pytest.raises(ValueError, match="at least"):
         sampled_energy(QuantumCircuit(1), SparsePauliOp.from_list([("X", 1), ("Z", 1)]), 0, 2, 5)
+
+
+def test_local_depolarizing_channel_has_known_effect():
+    circuit = QuantumCircuit(2)
+    circuit.h(0)
+    circuit.cx(0, 1)  # Bell state, <ZZ> = 1
+    circuit = transpile(circuit, basis_gates=["rz", "sx", "x", "cx"])
+    hamiltonian = SparsePauliOp.from_list([("ZZ", 1)])
+    assert noisy_energy(circuit, hamiltonian, offset=2, noise=0) == pytest.approx(3)
+    assert noisy_energy(circuit, hamiltonian, offset=2, noise=0.2) == pytest.approx(2.8)

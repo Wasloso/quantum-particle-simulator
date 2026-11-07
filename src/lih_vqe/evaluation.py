@@ -14,6 +14,16 @@ def make_simulator(noise: float) -> AerSimulator:
     return AerSimulator(method="density_matrix", noise_model=model, max_parallel_threads=1)
 
 
+def noisy_energy(
+    circuit: QuantumCircuit, hamiltonian: SparsePauliOp, offset: float, noise: float
+) -> float:
+    """Density-matrix expectation without sampling error."""
+    measured = circuit.copy()
+    measured.save_expectation_value(hamiltonian, list(range(circuit.num_qubits)), label="energy")
+    result = make_simulator(noise).run(measured, shots=1).result()
+    return float(np.real(result.data(0)["energy"])) + offset
+
+
 def measurement_circuit(circuit: QuantumCircuit, group: SparsePauliOp) -> QuantumCircuit:
     measured = circuit.copy()
     labels = [label for label, _ in group.to_list()]
