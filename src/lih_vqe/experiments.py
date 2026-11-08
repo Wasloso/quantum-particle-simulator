@@ -1,6 +1,6 @@
 import json
 import platform
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from datetime import UTC, datetime
 from importlib.metadata import version
 from pathlib import Path
@@ -60,6 +60,16 @@ def run_experiment(config: ExperimentConfig) -> dict:
         "evaluation": evaluation,
         "elapsed_seconds": perf_counter() - start,
     }
+
+
+def scan(config: ExperimentConfig):
+    config.validate()
+    for distance in config.scan.distances:
+        current = replace(config, molecule=replace(config.molecule, distance=distance))
+        try:
+            yield run_experiment(current)
+        except (ValueError, RuntimeError) as error:
+            yield {"status": RunStatus.FAILED, "config": asdict(current), "error": str(error)}
 
 
 def new_results(kind: str) -> dict:
