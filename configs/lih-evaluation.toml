@@ -1,0 +1,8 @@
+# Optimize UCCSD ideally, then evaluate the final state with noise and real shots.
+[model]
+active_orbitals = [1, 2, 5]
+
+[evaluation]
+shots = 100000
+noise = 0.001
+seed = 123

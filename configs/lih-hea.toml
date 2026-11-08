@@ -1,0 +1,10 @@
+# HEA may reach its budget without a valid singlet. Inspect sector_valid.
+[model]
+active_orbitals = [1, 2, 5]
+
+[vqe]
+ansatz = "hea"
+reps = 2
+optimizer = "COBYLA"
+max_evaluations = 1000
+seed = 42
