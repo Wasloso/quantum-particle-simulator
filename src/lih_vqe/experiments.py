@@ -8,8 +8,8 @@ from time import perf_counter
 
 from lih_vqe.ansatz import build_ansatz
 from lih_vqe.chemistry import build_problem
-from lih_vqe.config import ExperimentConfig
-from lih_vqe.enums import RunStatus
+from lih_vqe.config import ExperimentConfig, ModelConfig
+from lih_vqe.enums import MappingKind, ModelKind, RunStatus
 from lih_vqe.evaluation import noisy_energy, sampled_energy
 from lih_vqe.vqe import optimize
 
@@ -70,6 +70,46 @@ def scan(config: ExperimentConfig):
             yield run_experiment(current)
         except (ValueError, RuntimeError) as error:
             yield {"status": RunStatus.FAILED, "config": asdict(current), "error": str(error)}
+
+
+def compare_models(config: ExperimentConfig):
+    config.validate()
+    if (
+        config.molecule.symbols != ("Li", "H")
+        or config.molecule.basis.lower().replace("-", "") != "sto3g"
+    ):
+        raise ValueError("the preset comparison is defined for LiH in STO-3G")
+    presets = [
+        (
+            "Full / JW",
+            ModelConfig(
+                kind=ModelKind.FULL, mapping=MappingKind.JORDAN_WIGNER, two_qubit_reduction=False
+            ),
+        ),
+        ("Full / parity-2", ModelConfig(kind=ModelKind.FULL)),
+        (
+            "Frozen core / JW",
+            ModelConfig(
+                kind=ModelKind.FROZEN_CORE,
+                mapping=MappingKind.JORDAN_WIGNER,
+                two_qubit_reduction=False,
+            ),
+        ),
+        ("Frozen core / parity-2", ModelConfig(kind=ModelKind.FROZEN_CORE)),
+        ("Active (2,4) / parity-2", ModelConfig(active_orbitals=(1, 2, 3, 5))),
+        ("Active (2,3) / parity-2", ModelConfig(active_orbitals=(1, 2, 5))),
+    ]
+    for label, model in presets:
+        current = replace(config, model=model)
+        problem = build_problem(current)
+        yield {
+            "label": label,
+            "config": asdict(current),
+            "model": problem.metadata,
+            "references_hartree": problem.references,
+            "model_error_millihartree": 1000
+            * (problem.references["active_casci"] - problem.references["full_fci"]),
+        }
 
 
 def new_results(kind: str) -> dict:
